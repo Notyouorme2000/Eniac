@@ -137,6 +137,19 @@
             0%, 49% { opacity: 1; }
             50%, 100% { opacity: 0; }
         }
+        
+        .terminal-image {
+            filter: sepia(1) saturate(10) hue-rotate(320deg) brightness(0.8) contrast(2);
+            max-width: 100%;
+            margin: 10px 0;
+            border: 1px solid #FF0000;
+            padding: 5px;
+        }
+        
+        .image-container {
+            text-align: center;
+            margin: 15px 0;
+        }
     </style>
 </head>
 <body>
@@ -192,6 +205,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 This is another test entry.
 
 Sed ut perspiciatis unde omnis iste natus error sit voluptatem.
+`,
+            'matt_davis': `
+# Matt Davis Entry
+Following the retirement of the previous CEO in 2160, Medical Chairman Matthew Davis was appointed as the sixth CEO of the Helena Research Initiative. While most members accepted this decision, three Chairmen from other branches resigned, citing their belief that they were better suited for different roles. Their departure left HRI with a weakened leadership structure, consisting mainly of lower-ranking members and less prominent directors.
+
+[RETRO IMAGE: matt.png]
 `
         };
 
@@ -382,7 +401,11 @@ Sed ut perspiciatis unde omnis iste natus error sit voluptatem.
 
         function showEntry(entryName) {
             if (entries[entryName]) {
-                addToTerminal(`<span class="result"><div class="entry-content">${entries[entryName]}</div></span>`);
+                let content = entries[entryName];
+                
+                content = content.replace(/\[RETRO IMAGE: (.*?)\]/g, '<div class="image-container"><img src="$1" class="terminal-image" alt="Retro Terminal Image"></div>');
+                
+                addToTerminal(`<span class="result"><div class="entry-content">${content}</div></span>`);
             } else {
                 addToTerminal(`<span class="error">ERROR: Entry not found: ${entryName}</span>`);
                 playSound('error');
