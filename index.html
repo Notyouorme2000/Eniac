@@ -205,7 +205,7 @@ Sed ut perspiciatis unde omnis iste natus error sit voluptatem.
 
         const credentials = {
             username: 'admin',
-            password: 'HELENACORPORATION'
+            password: 'terminal1980'
         };
 
         let authenticated = false;
@@ -261,8 +261,8 @@ Sed ut perspiciatis unde omnis iste natus error sit voluptatem.
                     setTimeout(() => {
                         bootScreen.style.display = 'none';
                         inputLine.style.display = 'flex';
-                        addToTerminal('<span class="result">Eniac Terminal [Version 3.30]</span>');
-                        addToTerminal('<span class="result">(C) 2165-2166 Helenas Conventus.</span>');
+                        addToTerminal('<span class="result">MS-DOS Terminal [Version 3.30]</span>');
+                        addToTerminal('<span class="result">(C) 1980-1985 Microsoft Corp.</span>');
                         addToTerminal('<span class="result">\nType \'help\' for available commands.</span>');
                         addToTerminal('<span class="result">\nWARNING: UNAUTHORIZED ACCESS PROHIBITED</span>');
                         addToTerminal('<span class="result">Login required for full system access.</span>');
@@ -397,6 +397,7 @@ Sed ut perspiciatis unde omnis iste natus error sit voluptatem.
             }
         }
 
+        
         function clearTerminal() {
             output.innerHTML = '';
         }
@@ -423,7 +424,6 @@ Sed ut perspiciatis unde omnis iste natus error sit voluptatem.
             type();
         }
 
-        // Event listeners
         userInput.addEventListener('keydown', function(event) {
             if (event.key === 'Enter') {
                 const command = userInput.value;
@@ -446,6 +446,57 @@ Sed ut perspiciatis unde omnis iste natus error sit voluptatem.
 
         window.onload = function() {
             setTimeout(bootSequence, 500);
+        };
+
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey && e.shiftKey && e.keyCode == 73) || e.keyCode == 123) {
+                e.preventDefault();
+                return false;
+            }
+            
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 74) {
+                e.preventDefault();
+                return false;
+            }
+            
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 67) {
+                e.preventDefault();
+                return false;
+            }
+            
+            if (e.ctrlKey && e.keyCode == 85) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        function detectDevTools() {
+            const widthThreshold = window.outerWidth - window.innerWidth > 160;
+            const heightThreshold = window.outerHeight - window.innerHeight > 160;
+            
+            if (widthThreshold || heightThreshold) {
+                document.body.innerHTML = "Access Denied";
+                return true;
+            }
+            return false;
+        }
+
+        setInterval(detectDevTools, 1000);
+
+        const consoleWarning = "WARNING: This is a secure terminal. Accessing DevTools is prohibited.";
+        console.log(consoleWarning);
+        console.warn(consoleWarning);
+        console.error(consoleWarning);
+
+        const originalConsole = console;
+        console = {};
+        console.log = console.warn = console.error = function() {
+            originalConsole.warn(consoleWarning);
         };
     </script>
 </body>
