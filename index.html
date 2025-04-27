@@ -257,39 +257,41 @@ Some say.. His hairgel was bulletproof, we have 1 container of it for archival p
             
             let messageIndex = 0;
             
-            bootMessage.textContent = bootMessages[messageIndex];
-            
-            playSound('boot');
-            
-            const bootInterval = setInterval(() => {
-                progress += Math.random() * 5 + 2;
-                
-                if (progress >= 100) {
-                    progress = 100;
-                    clearInterval(bootInterval);
-                    
-                    setTimeout(() => {
-                        bootScreen.style.display = 'none';
-                        inputLine.style.display = 'flex';
-                        addToTerminal('<span class="result">ENIAC Terminal [Version 3.30]</span>');
-                        addToTerminal('<span class="result">(C) 2165-2166 HELENAS CONVENTUS.</span>');
-                        addToTerminal('<span class="result">\nType \'help\' for available commands.</span>');
-                        addToTerminal('<span class="result">\nWARNING: UNAUTHORIZED ACCESS PROHIBITED</span>');
-                        addToTerminal('<span class="result">Login required for full system access.</span>');
-                        userInput.focus();
-                    }, 1000);
-                    
-                } else {
-                    loadingBar.style.width = progress + '%';
-                    
-                    if (progress > (messageIndex + 1) * (100 / bootMessages.length)) {
-                        messageIndex = Math.min(messageIndex + 1, bootMessages.length - 1);
-                        typeWriterEffect(bootMessage, bootMessages[messageIndex], 50);
-                    }
-                    
-                    bootStatus.textContent = `${Math.floor(progress)}% COMPLETE`;
-                }
-            }, 200);
+bootMessage.textContent = bootMessages[messageIndex];
+
+playSound('boot');
+
+const bootInterval = setInterval(() => {
+    progress += Math.random() * 5 + 2;
+    
+    if (progress >= 100) {
+        progress = 100;
+        clearInterval(bootInterval);
+        
+        setTimeout(() => {
+            bootScreen.style.display = 'none';
+            inputLine.style.display = 'flex';
+            addToTerminal('<span class="result">ENIAC Terminal [Version 3.30]</span>');
+            addToTerminal('<span class="result">(C) 2165-2166 HELENAS CONVENTUS.</span>');
+            addToTerminal('<span class="result" style="font-size:10px;">A After the Flash UFF</span>');
+            addToTerminal('<span class="result">\nType \'help\' for available commands.</span>');
+            addToTerminal('<span class="result">\nWARNING: UNAUTHORIZED ACCESS PROHIBITED</span>');
+            addToTerminal('<span class="result">Login required for full system access.</span>');
+            userInput.focus();
+        }, 1000);
+        
+    } else {
+        loadingBar.style.width = progress + '%';
+        
+        if (progress > (messageIndex + 1) * (100 / bootMessages.length)) {
+            messageIndex = Math.min(messageIndex + 1, bootMessages.length - 1);
+            typeWriterEffect(bootMessage, bootMessages[messageIndex], 50);
+        }
+        
+        bootStatus.textContent = `${Math.floor(progress)}% COMPLETE`;
+    }
+}, 200);
+
         }
 
         function processCommand(input) {
