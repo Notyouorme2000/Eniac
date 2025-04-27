@@ -170,275 +170,350 @@
     </div>
 
     <script>
-     <script>
-const trm = document.getElementById('terminal');
-const out = document.getElementById('output');
-const usr = document.getElementById('user-input');
-const bootS = document.getElementById('boot-screen');
-const lBar = document.getElementById('loading-bar');
-const bStat = document.getElementById('boot-status');
-const inpLine = document.getElementById('input-line');
-const bMsg = document.getElementById('boot-message');
-const prmpt = document.getElementById('prompt');
+        const terminal = document.getElementById('terminal');
+        const output = document.getElementById('output');
+        const userInput = document.getElementById('user-input');
+        const bootScreen = document.getElementById('boot-screen');
+        const loadingBar = document.getElementById('loading-bar');
+        const bootStatus = document.getElementById('boot-status');
+        const inputLine = document.getElementById('input-line');
+        const bootMessage = document.getElementById('boot-message');
+        
+        const audioFiles = {
+            keyPress: 'key-press.mp3',
+            enter: 'enter.mp3',
+            error: 'error.mp3',
+            boot: 'boot.mp3'
+        };
+        
+        const entries = {
+            'deacon': 
+# Deacon Entry
+This is the Deacon entry content.
+robot
+robot
+robot
+,
+            'test1': 
+# Test1 Entry
+This is a test entry.
 
-const sfx = {
-    tap: 'key-press.mp3',
-    go: 'enter.mp3',
-    err: 'error.mp3',
-    buzz: 'boot.mp3'
-};
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+,
+            'test2': 
+# Test2 Entry
+This is another test entry.
 
-const logs = {
-    'deacon': `Deacon log.\nrobot\nrobot\nrobot`,
-    'test1': `Test run 1.\nLorem stuff.`,
-    'test2': `Test run 2.\nSed ut perspiciatis.`,
-    'matt_davis': `Matt D story.\nCEO drama. Hairgel archival.`
-};
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem.
+,
+            'matt_davis': 
+# Matt Davis Entry
+Following the retirement of the previous CEO in 2160, Medical Chairman Matthew Davis was appointed as the sixth CEO of the Helena Research Initiative. While most members accepted this decision, three Chairmen from other branches resigned, citing their belief that they were better suited for different roles. Their departure left HRI with a weakened leadership structure, consisting mainly of lower-ranking members and less prominent directors.
+Some say.. His hairgel was bulletproof, we have 1 container of it for archival purposes.
 
-const creds = {
-    usr: 'admin',
-    key: 'Helenastheory'
-};
+        };
 
-let okd = false;
-let tries = 0;
+        const credentials = {
+            username: 'admin',
+            password: 'Helenastheory'
+        };
 
-const cmds = {
-    'help': 'Show stuff',
-    'ls': 'See files',
-    'cat': 'Read file',
-    'clear': 'Wipe view',
-    'date': 'Time rn',
-    'whoami': 'Who u',
-    'echo': 'Say smth',
-    'login': 'Unlock',
-    'logout': 'Lock'
-};
+        let authenticated = false;
+        let loginAttempts = 0;
 
-function zap(t) {
-    try {
-        let s = new Audio(sfx[t]);
-        s.volume = 0.5;
-        s.play().catch(()=>{});
-    } catch {}
-}
+        const commands = {
+            'help': 'Display available commands',
+            'ls': 'List all entries',
+            'cat': 'Display entry content (usage: cat [entry-name])',
+            'clear': 'Clear the terminal screen',
+            'date': 'Display the current date and time',
+            'whoami': 'Display current user',
+            'echo': 'Echo a message (usage: echo [message])',
+            'login': 'Login to the system (usage: login [username] [password])',
+            'logout': 'Logout from the system'
+        };
 
-function booter() {
-    let prg = 0;
-    const bMsgs = [
-        "SYSTEM SPINUP...",
-        "KERNEL BUZZING...",
-        "GEARS CHECK...",
-        "FILES UP...",
-        "ENGINES ON...",
-        "CONSOLE SPARK...",
-        "READY 2 GO."
-    ];
-    let idx = 0;
-    
-    bMsg.textContent = bMsgs[idx];
-    zap('buzz');
-    const load = setInterval(()=>{
-        prg += Math.random() * 5 + 2;
-        if (prg >= 100) {
-            prg = 100;
-            clearInterval(load);
-            setTimeout(()=>{
-                bootS.style.display = 'none';
-                inpLine.style.display = 'flex';
-                mkAlert();
-                putIt('<span class="result">ENIAC [V3.30]</span>');
-                putIt('<span class="result">(C) 2165-66 HELENAS CO.</span>');
-                putIt('<span class="result">Unauthorized = 💀</span>');
-                putIt('<span class="result">LOGIN TO DO ANYTHING.</span>');
-                usr.focus();
-            }, 1000);
-        } else {
-            lBar.style.width = prg + '%';
-            if (prg > (idx+1)*(100/bMsgs.length)) {
-                idx = Math.min(idx+1, bMsgs.length-1);
-                twr(bMsg, bMsgs[idx], 50);
+        function playSound(soundType) {
+            try {
+                const audio = new Audio(audioFiles[soundType]);
+                audio.volume = 0.5;
+                audio.play().catch(e => console.log("Audio play failed:", e));
+            } catch (error) {
+                console.log("Audio not available:", error);
             }
-            bStat.textContent = `${Math.floor(prg)}%`;
         }
-    }, 200);
-}
 
-function mkAlert() {
-    let warn = document.createElement('span');
-    warn.id = 'warnSymbol';
-    warn.innerHTML = '⚠️ LOGIN REQUIRED';
-    warn.style.color = '#FF5500';
-    warn.style.fontSize = '18px';
-    warn.style.marginLeft = '10px';
-    warn.classList.add('blink');
-    inpLine.appendChild(warn);
-}
+        function bootSequence() {
+            let progress = 0;
+            const bootMessages = [
+                "INITIALIZING SYSTEM...",
+                "LOADING KERNEL...",
+                "CHECKING HARDWARE...",
+                "MOUNTING FILE SYSTEM...",
+                "STARTING SERVICES...",
+                "INITIALIZING TERMINAL...",
+                "SYSTEM READY."
+            ];
+            
+            let messageIndex = 0;
+            
+bootMessage.textContent = bootMessages[messageIndex];
 
-function killAlert() {
-    const w = document.getElementById('warnSymbol');
-    if (w) w.remove();
-}
+playSound('boot');
 
-function runCmd(x) {
-    const bits = x.trim().split(' ');
-    const cmd = bits[0].toLowerCase();
-    zap('go');
-    putIt(`<span class="command">${x}</span>`);
+const bootInterval = setInterval(() => {
+    progress += Math.random() * 5 + 2;
     
-    if (!okd && cmd !== 'login' && cmd !== '') {
-        putIt('<span class="error">ACCESS LOCKED. LOGIN FIRST.</span>');
-        zap('err');
-        return;
-    }
-    
-    switch(cmd) {
-        case 'help':
-            showHelp();
-            break;
-        case 'ls':
-            listIt();
-            break;
-        case 'cat':
-            bits[1] ? readIt(bits[1]) : errOut('Need file name.');
-            break;
-        case 'clear':
-            out.innerHTML = '';
-            break;
-        case 'date':
-            putIt(`<span class="result">${new Date().toString()}</span>`);
-            break;
-        case 'whoami':
-            putIt(`<span class="result">${okd ? creds.usr : 'guest'}</span>`);
-            break;
-        case 'echo':
-            putIt(`<span class="result">${bits.slice(1).join(' ')}</span>`);
-            break;
-        case 'login':
-            if (bits.length < 3) errOut('Login bad. login [usr] [key]');
-            else tryLog(bits[1], bits[2]);
-            break;
-        case 'logout':
-            outLog();
-            break;
-        case '':
-            break;
-        default:
-            errOut('?? Unknown cmd.');
-    }
-    trm.scrollTop = trm.scrollHeight;
-}
-
-function tryLog(u, p) {
-    if (u === creds.usr && p === creds.key) {
-        okd = true;
-        putIt('<span class="result">✅ WELCOME '+u+'</span>');
-        prmpt.textContent = 'C:\\'+u+'>';
-        killAlert();
+    if (progress >= 100) {
+        progress = 100;
+        clearInterval(bootInterval);
+        
+        setTimeout(() => {
+            bootScreen.style.display = 'none';
+            inputLine.style.display = 'flex';
+            addToTerminal('<span class="result">ENIAC Terminal [Version 3.30]</span>');
+            addToTerminal('<span class="result">(C) 2165-2166 HELENAS CONVENTUS.</span>');
+            addToTerminal('<span class="result" style="font-size:10px;">A After the Flash UFF</span>');
+            addToTerminal('<span class="result">\nType \'help\' for available commands.</span>');
+            addToTerminal('<span class="result">\nWARNING: UNAUTHORIZED ACCESS PROHIBITED</span>');
+            addToTerminal('<span class="result">Login required for full system access.</span>');
+            userInput.focus();
+        }, 1000);
+        
     } else {
-        tries++;
-        errOut('Nope. Wrong.');
-        if (tries >= 3) errOut('Yo chill.');
-    }
-}
-
-function outLog() {
-    if (okd) {
-        okd = false;
-        putIt('<span class="result">🔒 Logged out.</span>');
-        prmpt.textContent = 'C:\\>';
-        mkAlert();
-    } else {
-        errOut('Not even logged in.');
-    }
-}
-
-function showHelp() {
-    let t = '<span class="result">Commands u can use:</span>\n';
-    for (const [k, v] of Object.entries(cmds)) {
-        t += `<span class="result">  ${k.padEnd(8)} - ${v}</span>\n`;
-    }
-    putIt(t);
-}
-
-function listIt() {
-    let l = '<span class="result">Files:</span>\n';
-    Object.keys(logs).forEach(e=>{
-        l += `<span class="result">  ${e}</span>\n`;
-    });
-    putIt(l);
-}
-
-function readIt(n) {
-    if (logs[n]) putIt(`<span class="result"><div class="entry-content">${logs[n]}</div></span>`);
-    else errOut('No such file: '+n);
-}
-
-function putIt(txt) {
-    const d = document.createElement('div');
-    d.className = 'terminal-output';
-    d.innerHTML = txt;
-    out.appendChild(d);
-}
-
-function errOut(msg) {
-    putIt('<span class="error">'+msg+'</span>');
-    zap('err');
-}
-
-function twr(el, txt, spd) {
-    let idx = 0;
-    el.textContent = '';
-    function step() {
-        if (idx < txt.length) {
-            el.textContent += txt.charAt(idx++);
-            setTimeout(step, spd);
+        loadingBar.style.width = progress + '%';
+        
+        if (progress > (messageIndex + 1) * (100 / bootMessages.length)) {
+            messageIndex = Math.min(messageIndex + 1, bootMessages.length - 1);
+            typeWriterEffect(bootMessage, bootMessages[messageIndex], 50);
         }
+        
+        bootStatus.textContent = ${Math.floor(progress)}% COMPLETE;
     }
-    step();
-}
+}, 200);
 
-usr.addEventListener('keydown', (e)=>{
-    if (e.key === 'Enter') {
-        const cmd = usr.value;
-        usr.value = '';
-        runCmd(cmd);
-    } else {
-        zap('tap');
-    }
-});
+        }
 
-usr.focus();
+        function processCommand(input) {
+            const args = input.trim().split(' ');
+            const command = args[0].toLowerCase();
+            
+            playSound('enter');
+            
+            addToTerminal(<span class="command">${input}</span>);
+            
+            if (!authenticated && command !== 'login' && command !== 'help' && command !== '') {
+                addToTerminal('<span class="error">ACCESS DENIED: Login required. Use \'login [username] [password]\'</span>');
+                playSound('error');
+                return;
+            }
+            
+            switch(command) {
+                case 'help':
+                    showHelp();
+                    break;
+                case 'ls':
+                    listEntries();
+                    break;
+                case 'cat':
+                    if (args.length < 2) {
+                        addToTerminal('<span class="error">ERROR: Please specify an entry name (usage: cat [entry-name])</span>');
+                        playSound('error');
+                    } else {
+                        showEntry(args[1].toLowerCase());
+                    }
+                    break;
+                case 'clear':
+                    clearTerminal();
+                    break;
+                case 'date':
+                    addToTerminal(<span class="result">${new Date().toString()}</span>);
+                    break;
+                case 'whoami':
+                    addToTerminal(<span class="result">${authenticated ? credentials.username : 'guest'}</span>);
+                    break;
+                case 'echo':
+                    const message = args.slice(1).join(' ');
+                    addToTerminal(<span class="result">${message}</span>);
+                    break;
+                case 'login':
+                    if (args.length < 3) {
+                        addToTerminal('<span class="error">ERROR: Incorrect login syntax. Use \'login [username] [password]\'</span>');
+                        playSound('error');
+                    } else {
+                        login(args[1], args[2]);
+                    }
+                    break;
+                case 'logout':
+                    logout();
+                    break;
+                case '':
+                    break;
+                default:
+                    addToTerminal(<span class="error">COMMAND NOT FOUND: ${command}</span>);
+                    addToTerminal('<span class="error">Type \'help\' for available commands</span>');
+                    playSound('error');
+            }
+            
+            terminal.scrollTop = terminal.scrollHeight;
+        }
 
-trm.addEventListener('click', ()=>usr.focus());
+        function login(username, password) {
+            if (username === credentials.username && password === credentials.password) {
+                authenticated = true;
+                addToTerminal('<span class="result">LOGIN SUCCESSFUL. Welcome, ' + username + '.</span>');
+                document.getElementById('prompt').textContent = 'C:\\' + username + '>';
+            } else {
+                loginAttempts++;
+                addToTerminal('<span class="error">LOGIN FAILED: Incorrect username or password.</span>');
+                if (loginAttempts >= 3) {
+                    addToTerminal('<span class="error">WARNING: Multiple failed login attempts detected.</span>');
+                }
+                playSound('error');
+            }
+        }
 
-usr.addEventListener('blur', ()=>setTimeout(()=>usr.focus(), 10));
+        function logout() {
+            if (authenticated) {
+                authenticated = false;
+                addToTerminal('<span class="result">LOGOUT SUCCESSFUL. Goodbye.</span>');
+                document.getElementById('prompt').textContent = 'C:\\>';
+            } else {
+                addToTerminal('<span class="error">ERROR: Not logged in.</span>');
+                playSound('error');
+            }
+        }
 
-window.onload = ()=>setTimeout(booter, 500);
+        function showHelp() {
+            let helpText = '<span class="result">Available commands:</span>\n';
+            for (const [cmd, desc] of Object.entries(commands)) {
+                helpText += <span class="result">  ${cmd.padEnd(10)} - ${desc}</span>\n;
+            }
+            addToTerminal(helpText);
+        }
 
-document.addEventListener('keydown', (e)=>{
-    if ((e.ctrlKey && e.shiftKey && (e.keyCode==73 || e.keyCode==74 || e.keyCode==67)) || (e.ctrlKey && e.keyCode==85)) e.preventDefault();
-});
+        function listEntries() {
+            let entryList = '<span class="result">Available entries:</span>\n';
+            Object.keys(entries).forEach(entry => {
+                entryList += <span class="result">  ${entry}</span>\n;
+            });
+            addToTerminal(entryList);
+        }
 
-document.addEventListener('contextmenu', (e)=>e.preventDefault());
+        function showEntry(entryName) {
+            if (entries[entryName]) {
+                let content = entries[entryName];
+                
+                content = content.replace(/\[RETRO IMAGE: (.*?)\]/g, '<div class="image-container"><img src="$1" class="terminal-image" alt="Retro Terminal Image"></div>');
+                
+                addToTerminal(<span class="result"><div class="entry-content">${content}</div></span>);
+            } else {
+                addToTerminal(<span class="error">ERROR: Entry not found: ${entryName}</span>);
+                playSound('error');
+            }
+        }
 
-function seeDev() {
-    const weird = window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160;
-    if (weird) {
-        document.body.innerHTML = "Access Denied";
-        return true;
-    }
-    return false;
-}
-setInterval(seeDev, 1000);
+        
+        function clearTerminal() {
+            output.innerHTML = '';
+        }
 
-const warnMsg = "⚠️ SECURED TERMINAL. NO DEVTOOLS.";
-console.log(warnMsg);
-console.warn(warnMsg);
-console.error(warnMsg);
-const saveConsole = console;
-console = {};
-console.log = console.warn = console.error = function() {
-    saveConsole.warn(warnMsg);
-};
-</script>
+        function addToTerminal(text) {
+            const div = document.createElement('div');
+            div.className = 'terminal-output';
+            div.innerHTML = text;
+            output.appendChild(div);
+        }
+
+        function typeWriterEffect(element, text, speed) {
+            let i = 0;
+            element.textContent = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            
+            type();
+        }
+
+        userInput.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                const command = userInput.value;
+                userInput.value = '';
+                processCommand(command);
+            } else {
+                playSound('keyPress');
+            }
+        });
+
+        userInput.focus();
+        
+        terminal.addEventListener('click', function() {
+            userInput.focus();
+        });
+
+        userInput.addEventListener('blur', function() {
+            setTimeout(() => userInput.focus(), 10);
+        });
+
+        window.onload = function() {
+            setTimeout(bootSequence, 500);
+        };
+
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey && e.shiftKey && e.keyCode == 73) || e.keyCode == 123) {
+                e.preventDefault();
+                return false;
+            }
+            
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 74) {
+                e.preventDefault();
+                return false;
+            }
+            
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 67) {
+                e.preventDefault();
+                return false;
+            }
+            
+            if (e.ctrlKey && e.keyCode == 85) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        function detectDevTools() {
+            const widthThreshold = window.outerWidth - window.innerWidth > 160;
+            const heightThreshold = window.outerHeight - window.innerHeight > 160;
+            
+            if (widthThreshold || heightThreshold) {
+                document.body.innerHTML = "Access Denied";
+                return true;
+            }
+            return false;
+        }
+
+        setInterval(detectDevTools, 1000);
+
+        const consoleWarning = "WARNING: This is a secure terminal. Accessing DevTools is prohibited.";
+        console.log(consoleWarning);
+        console.warn(consoleWarning);
+        console.error(consoleWarning);
+
+        const originalConsole = console;
+        console = {};
+        console.log = console.warn = console.error = function() {
+            originalConsole.warn(consoleWarning);
+        };
+    </script>
+</body>
+</html>
