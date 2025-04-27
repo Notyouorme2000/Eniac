@@ -187,30 +187,29 @@
         };
         
         const entries = {
-            'deacon': 
+            'deacon': `
 # Deacon Entry
 This is the Deacon entry content.
 robot
 robot
 robot
-,
-            'test1': 
+`,
+            'test1': `
 # Test1 Entry
 This is a test entry.
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-,
-            'test2': 
+`,
+            'test2': `
 # Test2 Entry
 This is another test entry.
 
 Sed ut perspiciatis unde omnis iste natus error sit voluptatem.
-,
-            'matt_davis': 
+`,
+            'matt_davis': `
 # Matt Davis Entry
 Following the retirement of the previous CEO in 2160, Medical Chairman Matthew Davis was appointed as the sixth CEO of the Helena Research Initiative. While most members accepted this decision, three Chairmen from other branches resigned, citing their belief that they were better suited for different roles. Their departure left HRI with a weakened leadership structure, consisting mainly of lower-ranking members and less prominent directors.
-Some say.. His hairgel was bulletproof, we have 1 container of it for archival purposes.
-
+`
         };
 
         const credentials = {
@@ -257,41 +256,39 @@ Some say.. His hairgel was bulletproof, we have 1 container of it for archival p
             
             let messageIndex = 0;
             
-bootMessage.textContent = bootMessages[messageIndex];
-
-playSound('boot');
-
-const bootInterval = setInterval(() => {
-    progress += Math.random() * 5 + 2;
-    
-    if (progress >= 100) {
-        progress = 100;
-        clearInterval(bootInterval);
-        
-        setTimeout(() => {
-            bootScreen.style.display = 'none';
-            inputLine.style.display = 'flex';
-            addToTerminal('<span class="result">ENIAC Terminal [Version 3.30]</span>');
-            addToTerminal('<span class="result">(C) 2165-2166 HELENAS CONVENTUS.</span>');
-            addToTerminal('<span class="result" style="font-size:10px;">A After the Flash UFF</span>');
-            addToTerminal('<span class="result">\nType \'help\' for available commands.</span>');
-            addToTerminal('<span class="result">\nWARNING: UNAUTHORIZED ACCESS PROHIBITED</span>');
-            addToTerminal('<span class="result">Login required for full system access.</span>');
-            userInput.focus();
-        }, 1000);
-        
-    } else {
-        loadingBar.style.width = progress + '%';
-        
-        if (progress > (messageIndex + 1) * (100 / bootMessages.length)) {
-            messageIndex = Math.min(messageIndex + 1, bootMessages.length - 1);
-            typeWriterEffect(bootMessage, bootMessages[messageIndex], 50);
-        }
-        
-        bootStatus.textContent = ${Math.floor(progress)}% COMPLETE;
-    }
-}, 200);
-
+            bootMessage.textContent = bootMessages[messageIndex];
+            
+            playSound('boot');
+            
+            const bootInterval = setInterval(() => {
+                progress += Math.random() * 5 + 2;
+                
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(bootInterval);
+                    
+                    setTimeout(() => {
+                        bootScreen.style.display = 'none';
+                        inputLine.style.display = 'flex';
+                        addToTerminal('<span class="result">ENIAC Terminal [Version 3.30]</span>');
+                        addToTerminal('<span class="result">(C) 2165-2166 HELENAS CONVENTUS.</span>');
+                        addToTerminal('<span class="result">\nType \'help\' for available commands.</span>');
+                        addToTerminal('<span class="result">\nWARNING: UNAUTHORIZED ACCESS PROHIBITED</span>');
+                        addToTerminal('<span class="result">Login required for full system access.</span>');
+                        userInput.focus();
+                    }, 1000);
+                    
+                } else {
+                    loadingBar.style.width = progress + '%';
+                    
+                    if (progress > (messageIndex + 1) * (100 / bootMessages.length)) {
+                        messageIndex = Math.min(messageIndex + 1, bootMessages.length - 1);
+                        typeWriterEffect(bootMessage, bootMessages[messageIndex], 50);
+                    }
+                    
+                    bootStatus.textContent = `${Math.floor(progress)}% COMPLETE`;
+                }
+            }, 200);
         }
 
         function processCommand(input) {
@@ -300,7 +297,7 @@ const bootInterval = setInterval(() => {
             
             playSound('enter');
             
-            addToTerminal(<span class="command">${input}</span>);
+            addToTerminal(`<span class="command">${input}</span>`);
             
             if (!authenticated && command !== 'login' && command !== 'help' && command !== '') {
                 addToTerminal('<span class="error">ACCESS DENIED: Login required. Use \'login [username] [password]\'</span>');
@@ -327,14 +324,14 @@ const bootInterval = setInterval(() => {
                     clearTerminal();
                     break;
                 case 'date':
-                    addToTerminal(<span class="result">${new Date().toString()}</span>);
+                    addToTerminal(`<span class="result">${new Date().toString()}</span>`);
                     break;
                 case 'whoami':
-                    addToTerminal(<span class="result">${authenticated ? credentials.username : 'guest'}</span>);
+                    addToTerminal(`<span class="result">${authenticated ? credentials.username : 'guest'}</span>`);
                     break;
                 case 'echo':
                     const message = args.slice(1).join(' ');
-                    addToTerminal(<span class="result">${message}</span>);
+                    addToTerminal(`<span class="result">${message}</span>`);
                     break;
                 case 'login':
                     if (args.length < 3) {
@@ -350,7 +347,7 @@ const bootInterval = setInterval(() => {
                 case '':
                     break;
                 default:
-                    addToTerminal(<span class="error">COMMAND NOT FOUND: ${command}</span>);
+                    addToTerminal(`<span class="error">COMMAND NOT FOUND: ${command}</span>`);
                     addToTerminal('<span class="error">Type \'help\' for available commands</span>');
                     playSound('error');
             }
@@ -387,7 +384,7 @@ const bootInterval = setInterval(() => {
         function showHelp() {
             let helpText = '<span class="result">Available commands:</span>\n';
             for (const [cmd, desc] of Object.entries(commands)) {
-                helpText += <span class="result">  ${cmd.padEnd(10)} - ${desc}</span>\n;
+                helpText += `<span class="result">  ${cmd.padEnd(10)} - ${desc}</span>\n`;
             }
             addToTerminal(helpText);
         }
@@ -395,7 +392,7 @@ const bootInterval = setInterval(() => {
         function listEntries() {
             let entryList = '<span class="result">Available entries:</span>\n';
             Object.keys(entries).forEach(entry => {
-                entryList += <span class="result">  ${entry}</span>\n;
+                entryList += `<span class="result">  ${entry}</span>\n`;
             });
             addToTerminal(entryList);
         }
@@ -404,11 +401,12 @@ const bootInterval = setInterval(() => {
             if (entries[entryName]) {
                 let content = entries[entryName];
                 
+                // Handle image placeholders
                 content = content.replace(/\[RETRO IMAGE: (.*?)\]/g, '<div class="image-container"><img src="$1" class="terminal-image" alt="Retro Terminal Image"></div>');
                 
-                addToTerminal(<span class="result"><div class="entry-content">${content}</div></span>);
+                addToTerminal(`<span class="result"><div class="entry-content">${content}</div></span>`);
             } else {
-                addToTerminal(<span class="error">ERROR: Entry not found: ${entryName}</span>);
+                addToTerminal(`<span class="error">ERROR: Entry not found: ${entryName}</span>`);
                 playSound('error');
             }
         }
