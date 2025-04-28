@@ -73,6 +73,8 @@
         .terminal-output {
             margin-bottom: 10px;
             white-space: pre-wrap;
+            opacity: 1;
+            transition: opacity 0.1s;
         }
         
         .command {
@@ -150,6 +152,45 @@
             text-align: center;
             margin: 15px 0;
         }
+
+        /* Glitch effects */
+        .glitch {
+            animation: glitch-animation 0.3s ease-in-out;
+        }
+
+        @keyframes glitch-animation {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        .noise {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0;
+            background-image: url('data:image/png;base64,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');
+        }
+
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: rgba(255, 0, 0, 0.2);
+            opacity: 0;
+            z-index: 99;
+            pointer-events: none;
+            box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+        }
     </style>
 </head>
 <body>
@@ -166,7 +207,10 @@
         <div id="input-line" style="display: none;">
             <span id="prompt">C:\\></span>
             <input type="text" id="user-input" autofocus spellcheck="false">
+            <div class="cursor"></div>
         </div>
+        <div class="noise"></div>
+        <div class="scan-line"></div>
     </div>
 
     <script>
@@ -178,6 +222,8 @@
         const bootStatus = document.getElementById('boot-status');
         const inputLine = document.getElementById('input-line');
         const bootMessage = document.getElementById('boot-message');
+        const noise = document.querySelector('.noise');
+        const scanLine = document.querySelector('.scan-line');
         
         const audioFiles = {
             keyPress: 'key-press.mp3',
@@ -242,6 +288,54 @@ Following the retirement of the previous CEO in 2160, Medical Chairman Matthew D
             }
         }
 
+        // Random glitch effects
+        function triggerRandomGlitch() {
+            const glitchChance = Math.random();
+            
+            if (glitchChance < 0.3) {
+                // Screen noise
+                noise.style.opacity = '0.05';
+                setTimeout(() => {
+                    noise.style.opacity = '0';
+                }, 150);
+            } else if (glitchChance < 0.5) {
+                // Text glitch
+                const outputs = document.querySelectorAll('.terminal-output');
+                if (outputs.length > 0) {
+                    const randomOutput = outputs[Math.floor(Math.random() * outputs.length)];
+                    randomOutput.classList.add('glitch');
+                    setTimeout(() => {
+                        randomOutput.classList.remove('glitch');
+                    }, 300);
+                }
+            } else if (glitchChance < 0.7) {
+                // Scan line
+                scanLine.style.opacity = '1';
+                scanLine.style.top = Math.random() * terminal.offsetHeight + 'px';
+                setTimeout(() => {
+                    scanLine.style.opacity = '0';
+                }, 200);
+            } else if (glitchChance < 0.85) {
+                // Flicker effect
+                const randomOutputs = Array.from(document.querySelectorAll('.terminal-output'))
+                    .filter(() => Math.random() < 0.3);
+                
+                if (randomOutputs.length > 0) {
+                    randomOutputs.forEach(output => {
+                        const originalOpacity = output.style.opacity || 1;
+                        output.style.opacity = 0.3;
+                        setTimeout(() => {
+                            output.style.opacity = originalOpacity;
+                        }, 100);
+                    });
+                }
+            }
+            
+            // Schedule next glitch
+            const nextGlitchTime = 5000 + Math.random() * 20000; // Between 5-25 seconds
+            setTimeout(triggerRandomGlitch, nextGlitchTime);
+        }
+
         function bootSequence() {
             let progress = 0;
             const bootMessages = [
@@ -270,12 +364,22 @@ Following the retirement of the previous CEO in 2160, Medical Chairman Matthew D
                     setTimeout(() => {
                         bootScreen.style.display = 'none';
                         inputLine.style.display = 'flex';
-                        addToTerminal('<span class="result">ENIAC Terminal [Version 3.30]</span>');
-                        addToTerminal('<span class="result">(C) 2165-2166 HELENAS CONVENTUS.</span>');
-                        addToTerminal('<span class="result">\nType \'help\' for available commands.</span>');
-                        addToTerminal('<span class="result">\nWARNING: UNAUTHORIZED ACCESS PROHIBITED</span>');
-                        addToTerminal('<span class="result">Login required for full system access.</span>');
-                        userInput.focus();
+                        typeOutput('<span class="result">ENIAC Terminal [Version 3.30]</span>');
+                        setTimeout(() => {
+                            typeOutput('<span class="result">(C) 2165-2166 HELENAS CONVENTUS.</span>');
+                            setTimeout(() => {
+                                typeOutput('<span class="result">\nType \'help\' for available commands.</span>');
+                                setTimeout(() => {
+                                    typeOutput('<span class="result">\nWARNING: UNAUTHORIZED ACCESS PROHIBITED</span>');
+                                    setTimeout(() => {
+                                        typeOutput('<span class="result">Login required for full system access.</span>');
+                                        userInput.focus();
+                                        // Start random glitches after boot
+                                        setTimeout(triggerRandomGlitch, 5000);
+                                    }, 500);
+                                }, 400);
+                            }, 400);
+                        }, 300);
                     }, 1000);
                     
                 } else {
@@ -300,7 +404,7 @@ Following the retirement of the previous CEO in 2160, Medical Chairman Matthew D
             addToTerminal(`<span class="command">${input}</span>`);
             
             if (!authenticated && command !== 'login' && command !== 'help' && command !== '') {
-                addToTerminal('<span class="error">ACCESS DENIED: Login required. Use \'login [username] [password]\'</span>');
+                typeOutput('<span class="error">ACCESS DENIED: Login required. Use \'login [username] [password]\'</span>');
                 playSound('error');
                 return;
             }
@@ -314,7 +418,7 @@ Following the retirement of the previous CEO in 2160, Medical Chairman Matthew D
                     break;
                 case 'cat':
                     if (args.length < 2) {
-                        addToTerminal('<span class="error">ERROR: Please specify an entry name (usage: cat [entry-name])</span>');
+                        typeOutput('<span class="error">ERROR: Please specify an entry name (usage: cat [entry-name])</span>');
                         playSound('error');
                     } else {
                         showEntry(args[1].toLowerCase());
@@ -324,18 +428,18 @@ Following the retirement of the previous CEO in 2160, Medical Chairman Matthew D
                     clearTerminal();
                     break;
                 case 'date':
-                    addToTerminal(`<span class="result">${new Date().toString()}</span>`);
+                    typeOutput(`<span class="result">${new Date().toString()}</span>`);
                     break;
                 case 'whoami':
-                    addToTerminal(`<span class="result">${authenticated ? credentials.username : 'guest'}</span>`);
+                    typeOutput(`<span class="result">${authenticated ? credentials.username : 'guest'}</span>`);
                     break;
                 case 'echo':
                     const message = args.slice(1).join(' ');
-                    addToTerminal(`<span class="result">${message}</span>`);
+                    typeOutput(`<span class="result">${message}</span>`);
                     break;
                 case 'login':
                     if (args.length < 3) {
-                        addToTerminal('<span class="error">ERROR: Incorrect login syntax. Use \'login [username] [password]\'</span>');
+                        typeOutput('<span class="error">ERROR: Incorrect login syntax. Use \'login [username] [password]\'</span>');
                         playSound('error');
                     } else {
                         login(args[1], args[2]);
@@ -347,8 +451,10 @@ Following the retirement of the previous CEO in 2160, Medical Chairman Matthew D
                 case '':
                     break;
                 default:
-                    addToTerminal(`<span class="error">COMMAND NOT FOUND: ${command}</span>`);
-                    addToTerminal('<span class="error">Type \'help\' for available commands</span>');
+                    typeOutput(`<span class="error">COMMAND NOT FOUND: ${command}</span>`);
+                    setTimeout(() => {
+                        typeOutput('<span class="error">Type \'help\' for available commands</span>');
+                    }, 300);
                     playSound('error');
             }
             
@@ -358,13 +464,15 @@ Following the retirement of the previous CEO in 2160, Medical Chairman Matthew D
         function login(username, password) {
             if (username === credentials.username && password === credentials.password) {
                 authenticated = true;
-                addToTerminal('<span class="result">LOGIN SUCCESSFUL. Welcome, ' + username + '.</span>');
+                typeOutput('<span class="result">LOGIN SUCCESSFUL. Welcome, ' + username + '.</span>');
                 document.getElementById('prompt').textContent = 'C:\\' + username + '>';
             } else {
                 loginAttempts++;
-                addToTerminal('<span class="error">LOGIN FAILED: Incorrect username or password.</span>');
+                typeOutput('<span class="error">LOGIN FAILED: Incorrect username or password.</span>');
                 if (loginAttempts >= 3) {
-                    addToTerminal('<span class="error">WARNING: Multiple failed login attempts detected.</span>');
+                    setTimeout(() => {
+                        typeOutput('<span class="error">WARNING: Multiple failed login attempts detected.</span>');
+                    }, 400);
                 }
                 playSound('error');
             }
@@ -373,28 +481,49 @@ Following the retirement of the previous CEO in 2160, Medical Chairman Matthew D
         function logout() {
             if (authenticated) {
                 authenticated = false;
-                addToTerminal('<span class="result">LOGOUT SUCCESSFUL. Goodbye.</span>');
+                typeOutput('<span class="result">LOGOUT SUCCESSFUL. Goodbye.</span>');
                 document.getElementById('prompt').textContent = 'C:\\>';
             } else {
-                addToTerminal('<span class="error">ERROR: Not logged in.</span>');
+                typeOutput('<span class="error">ERROR: Not logged in.</span>');
                 playSound('error');
             }
         }
 
         function showHelp() {
             let helpText = '<span class="result">Available commands:</span>\n';
-            for (const [cmd, desc] of Object.entries(commands)) {
-                helpText += `<span class="result">  ${cmd.padEnd(10)} - ${desc}</span>\n`;
+            typeOutput(helpText);
+            
+            let index = 0;
+            const commandEntries = Object.entries(commands);
+            
+            function typeNextCommand() {
+                if (index < commandEntries.length) {
+                    const [cmd, desc] = commandEntries[index];
+                    typeOutput(`<span class="result">  ${cmd.padEnd(10)} - ${desc}</span>`);
+                    index++;
+                    setTimeout(typeNextCommand, 100);
+                }
             }
-            addToTerminal(helpText);
+            
+            setTimeout(typeNextCommand, 200);
         }
 
         function listEntries() {
-            let entryList = '<span class="result">Available entries:</span>\n';
-            Object.keys(entries).forEach(entry => {
-                entryList += `<span class="result">  ${entry}</span>\n`;
-            });
-            addToTerminal(entryList);
+            typeOutput('<span class="result">Available entries:</span>');
+            
+            let index = 0;
+            const entryKeys = Object.keys(entries);
+            
+            function typeNextEntry() {
+                if (index < entryKeys.length) {
+                    const entry = entryKeys[index];
+                    typeOutput(`<span class="result">  ${entry}</span>`);
+                    index++;
+                    setTimeout(typeNextEntry, 100);
+                }
+            }
+            
+            setTimeout(typeNextEntry, 200);
         }
 
         function showEntry(entryName) {
@@ -404,13 +533,34 @@ Following the retirement of the previous CEO in 2160, Medical Chairman Matthew D
                 // Handle image placeholders
                 content = content.replace(/\[RETRO IMAGE: (.*?)\]/g, '<div class="image-container"><img src="$1" class="terminal-image" alt="Retro Terminal Image"></div>');
                 
-                addToTerminal(`<span class="result"><div class="entry-content">${content}</div></span>`);
+                // Split content into lines for typewriter effect
+                const lines = content.split('\n');
+                let lineIndex = 0;
+                
+                function typeNextLine() {
+                    if (lineIndex < lines.length) {
+                        const line = lines[lineIndex];
+                        if (line.trim() !== '') {
+                            typeOutput(`<span class="result">${line}</span>`);
+                        } else {
+                            addToTerminal(`<span class="result">${line}</span>`);
+                        }
+                        lineIndex++;
+                        setTimeout(typeNextLine, 100);
+                    }
+                }
+                
+                typeOutput(`<span class="result"><div class="entry-content">`);
+                setTimeout(typeNextLine, 200);
+                setTimeout(() => {
+                    addToTerminal(`</div></span>`);
+                }, 200 + lines.length * 100);
+                
             } else {
-                addToTerminal(`<span class="error">ERROR: Entry not found: ${entryName}</span>`);
+                typeOutput(`<span class="error">ERROR: Entry not found: ${entryName}</span>`);
                 playSound('error');
             }
         }
-
         
         function clearTerminal() {
             output.innerHTML = '';
@@ -421,6 +571,57 @@ Following the retirement of the previous CEO in 2160, Medical Chairman Matthew D
             div.className = 'terminal-output';
             div.innerHTML = text;
             output.appendChild(div);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        function typeOutput(text) {
+            const div = document.createElement('div');
+            div.className = 'terminal-output';
+            output.appendChild(div);
+            
+            let content = text;
+            let plainText = text.replace(/<[^>]*>/g, '');
+            let charIndex = 0;
+            let htmlIndex = 0;
+            let result = '';
+            let inTag = false;
+            
+            function typeChar() {
+                if (htmlIndex < content.length) {
+                    if (content[htmlIndex] === '<') {
+                        inTag = true;
+                        let tag = '<';
+                        htmlIndex++;
+                        
+                        while (htmlIndex < content.length && content[htmlIndex] !== '>') {
+                            tag += content[htmlIndex];
+                            htmlIndex++;
+                        }
+                        
+                        if (htmlIndex < content.length) {
+                            tag += '>';
+                            htmlIndex++;
+                        }
+                        
+                        result += tag;
+                        inTag = false;
+                        div.innerHTML = result;
+                        typeChar();
+                    } 
+                    else {
+                        result += content[htmlIndex];
+                        htmlIndex++;
+                        charIndex++;
+                        div.innerHTML = result;
+                        
+                        const randomDelay = Math.random() * 20 + 21; 
+                        setTimeout(typeChar, randomDelay);
+                    }
+                }
+                terminal.scrollTop = terminal.scrollHeight;
+            }
+            
+            typeChar();
         }
 
         function typeWriterEffect(element, text, speed) {
@@ -458,8 +659,57 @@ Following the retirement of the previous CEO in 2160, Medical Chairman Matthew D
             setTimeout(() => userInput.focus(), 10);
         });
 
+        function randomGlitch() {
+            if (Math.random() < 0.01) {
+                const glitchType = Math.floor(Math.random() * 3);
+                
+                switch (glitchType) {
+                    case 0:
+                        terminal.style.opacity = '0.7';
+                        setTimeout(() => {
+                            terminal.style.opacity = '1';
+                        }, 50);
+                        break;
+                    case 1:
+                        const outputs = document.querySelectorAll('.terminal-output');
+                        if (outputs.length > 0) {
+                            const randomOutput = outputs[Math.floor(Math.random() * outputs.length)];
+                            const originalText = randomOutput.innerHTML;
+                            const glitchChars = '!@#$%^&*()_+-={}[]|;:\'",.<>?/\\';
+                            let glitchedText = '';
+                            
+                            for (let i = 0; i < originalText.length; i++) {
+                                if (Math.random() < 0.1) {
+                                    glitchedText += glitchChars[Math.floor(Math.random() * glitchChars.length)];
+                                } else {
+                                    glitchedText += originalText[i];
+                                }
+                            }
+                            
+                            randomOutput.innerHTML = glitchedText;
+                            
+                            setTimeout(() => {
+                                randomOutput.innerHTML = originalText;
+                            }, 100);
+                        }
+                        break;
+                    case 2:
+                        scanLine.style.opacity = '1';
+                        scanLine.style.top = Math.random() * terminal.offsetHeight + 'px';
+                        
+                        setTimeout(() => {
+                            scanLine.style.opacity = '0';
+                        }, 150);
+                        break;
+                }
+            }
+            
+            setTimeout(randomGlitch, 10000);
+        }
+
         window.onload = function() {
             setTimeout(bootSequence, 500);
+            setTimeout(randomGlitch, 15000); 
         };
 
         document.addEventListener('keydown', function(e) {
@@ -512,6 +762,98 @@ Following the retirement of the previous CEO in 2160, Medical Chairman Matthew D
         console.log = console.warn = console.error = function() {
             originalConsole.warn(consoleWarning);
         };
+        
+        function randomTerminalFlicker() {
+            if (Math.random() < 0.1) { // 10% chance
+                const flickerDuration = Math.random() * 100 + 50; // 50-150ms
+                terminal.classList.add('glitch');
+                
+                setTimeout(() => {
+                    terminal.classList.remove('glitch');
+                }, flickerDuration);
+            }
+            
+            const nextFlicker = Math.random() * 30000 + 60000; // Between 1-1.5 minutes
+            setTimeout(randomTerminalFlicker, nextFlicker);
+        }
+        
+        setTimeout(randomTerminalFlicker, 30000);
+        
+        function simulateTyping(text, element, callback) {
+            let i = 0;
+            element.value = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.value += text.charAt(i);
+                    i++;
+                    setTimeout(type, Math.random() * 100 + 50);
+                } else if (callback) {
+                    callback();
+                }
+            }
+            
+            type();
+        }
+        
+        function randomSystemMessage() {
+            const messages = [
+                "SYSTEM: Memory check complete.",
+                "SYSTEM: Network connection stable.",
+                "SYSTEM: Security protocol active.",
+                "SYSTEM: Backup sequence initiated.",
+                "SYSTEM: Temperature nominal.",
+                "WARNING: Unusual access pattern detected.",
+                "NOTICE: System maintenance scheduled."
+            ];
+            
+            if (Math.random() < 0.05 && authenticated) {
+                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                typeOutput(`<span class="result">${randomMessage}</span>`);
+            }
+            
+            const nextMessage = Math.random() * 120000 + 180000; 
+            setTimeout(randomSystemMessage, nextMessage);
+        }
+        
+        setTimeout(randomSystemMessage, 60000);
+        
+        function addCorruption() {
+            if (Math.random() < 0.02) {
+                const outputs = document.querySelectorAll('.terminal-output');
+                if (outputs.length > 3) { 
+                    const targetIndex = Math.floor(Math.random() * (outputs.length - 2));
+                    const target = outputs[targetIndex];
+                    
+                    const originalContent = target.innerHTML;
+                    
+                    let corrupted = originalContent;
+                    const corruptionLevel = Math.random() * 0.1; 
+                    
+                    for (let i = 0; i < corrupted.length; i++) {
+                        if (Math.random() < corruptionLevel && corrupted[i] !== '<' && corrupted[i] !== '>') {
+                            const corruptChars = '█▓▒░■□▪▫▬▭▮▯▰▱◆◇◈◉○●◌◍◎◐◑◒◓◔◕◖◗';
+                            corrupted = corrupted.substring(0, i) + 
+                                corruptChars[Math.floor(Math.random() * corruptChars.length)] + 
+                                corrupted.substring(i + 1);
+                        }
+                    }
+                    
+                    target.innerHTML = corrupted;
+                    
+                    if (Math.random() < 0.99) { 
+                        setTimeout(() => {
+                            target.innerHTML = originalContent;
+                        }, Math.random() * 1000 + 500); 
+                    }
+                }
+            }
+            
+            const nextCorruption = Math.random() * 60000 + 120000; 
+            setTimeout(addCorruption, nextCorruption);
+        }
+        
+        setTimeout(addCorruption, 90000);
     </script>
 </body>
 </html>
