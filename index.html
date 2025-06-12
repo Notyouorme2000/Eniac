@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SYSTEM TERMINAL v2.1</title>
+    <title>JAKE'S GOODIES TERMINAL v3.0</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
         
@@ -92,6 +92,11 @@
             caret-color: #00ff00;
         }
         
+        .password-input {
+            -webkit-text-security: disc;
+            text-security: disc;
+        }
+        
         .cursor {
             display: inline-block;
             width: 8px;
@@ -119,6 +124,11 @@
             color: #ffff00;
             text-shadow: 0 0 5px #ffff00;
         }
+        
+        .admin {
+            color: #ff00ff;
+            text-shadow: 0 0 5px #ff00ff;
+        }
     </style>
 </head>
 <body>
@@ -127,19 +137,19 @@
         <div class="content">
             <div class="header">
                 <pre>
-████████╗███████╗██████╗ ███╗   ███╗██╗███╗   ██╗ █████╗ ██╗     
-╚══██╔══╝██╔════╝██╔══██╗████╗ ████║██║████╗  ██║██╔══██╗██║     
-   ██║   █████╗  ██████╔╝██╔████╔██║██║██╔██╗ ██║███████║██║     
-   ██║   ██╔══╝  ██╔══██╗██║╚██╔╝██║██║██║╚██╗██║██╔══██║██║     
-   ██║   ███████╗██║  ██║██║ ╚═╝ ██║██║██║ ╚████║██║  ██║███████╗
-   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝
-                                                                   
-                     SYSTEM v2.1 - AUTHORIZED ACCESS ONLY
+     ██╗ █████╗ ██╗  ██╗███████╗██╗███████╗    ██████╗  ██████╗  ██████╗ ██████╗ ██╗███████╗███████╗
+     ██║██╔══██╗██║ ██╔╝██╔════╝██║██╔════╝   ██╔════╝ ██╔═══██╗██╔═══██╗██╔══██╗██║██╔════╝██╔════╝
+     ██║███████║█████╔╝ █████╗  ███║███████╗   ██║  ███╗██║   ██║██║   ██║██║  ██║██║█████╗  ███████╗
+██   ██║██╔══██║██╔═██╗ ██╔══╝  ╚══╝╚════██║   ██║   ██║██║   ██║██║   ██║██║  ██║██║██╔══╝  ╚════██║
+╚█████╔╝██║  ██║██║  ██╗███████╗   ███████║   ╚██████╔╝╚██████╔╝╚██████╔╝██████╔╝██║███████╗███████║
+ ╚════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝   ╚══════╝    ╚═════╝  ╚═════╝  ╚═════╝ ╚═════╝ ╚═╝╚══════╝╚══════╝
+                                                                                                      
+                                    SECURE ACCESS TERMINAL v3.0
                 </pre>
             </div>
             <div class="output" id="output"></div>
             <div class="input-line">
-                <span class="prompt">SYSTEM> </span>
+                <span class="prompt" id="prompt">LOGIN> </span>
                 <input type="text" class="input" id="commandInput" autocomplete="off" spellcheck="false">
                 <span class="cursor"></span>
             </div>
@@ -183,6 +193,7 @@
         
         const output = document.getElementById('output');
         const input = document.getElementById('commandInput');
+        const prompt = document.getElementById('prompt');
         
         // Audio setup
         const bootSound = new Audio('boot.mp3');
@@ -190,23 +201,88 @@
         typeSound.volume = 0.3;
         bootSound.volume = 0.7;
         
-        const commands = {
-            'HELP': 'AVAILABLE COMMANDS:\n- LIST: Show directory contents\n- STATUS: System status\n- CLEAR: Clear screen\n- EXIT: Terminate session\n- DATE: Current system time\n- WHOAMI: User information\n- UPTIME: System uptime',
-            'LIST': 'Directory contents:\ntest1.dat\ntest2.exe\ntest3.sys\nsystem.cfg\nboot.log',
-            'STATUS': 'SYSTEM STATUS: OPERATIONAL\nCPU: 98% IDLE\nMEMORY: 2.1MB / 8MB USED\nDISK: 45% CAPACITY\nNETWORK: CONNECTED',
-            'DATE': () => new Date().toLocaleString(),
-            'WHOAMI': 'USER: ADMIN\nCLEARANCE LEVEL: CLASSIFIED\nSESSION: 0x2A4F',
-            'UPTIME': 'SYSTEM UPTIME: 127 DAYS, 14 HOURS, 32 MINUTES',
-            'CLEAR': 'clear'
+        // User system
+        const users = {
+            'amelia': {
+                password: 'admin123',
+                level: 'admin',
+                name: 'Amelia'
+            },
+            'user2': {
+                password: 'pass2',
+                level: 'user',
+                name: 'User2'
+            },
+            'user3': {
+                password: 'pass3',
+                level: 'user',
+                name: 'User3'
+            }
         };
         
+        // File system with permissions
+        const fileSystem = {
+            'classified.dat': {
+                content: 'CLASSIFIED INFORMATION - ADMIN EYES ONLY\nThis file contains sensitive data that requires admin clearance.',
+                permission: 'admin',
+                type: 'file'
+            },
+            'readme.txt': {
+                content: 'Welcome to Jake\'s Goodies Terminal!\nThis system contains various files and tools.\nUse LS or CAT commands to navigate.',
+                permission: 'user',
+                type: 'file'
+            },
+            'users.db': {
+                content: 'USER DATABASE\n=============\nActive Users: 3\nAdmin Users: 1\nSystem Status: OPERATIONAL',
+                permission: 'admin',
+                type: 'file'
+            },
+            'public_info.txt': {
+                content: 'PUBLIC INFORMATION FILE\n======================\nThis file is accessible to all users.\nContains general system information and guidelines.',
+                permission: 'user',
+                type: 'file'
+            },
+            'test1.dat': {
+                content: 'TEST FILE 1\n===========\nThis is a test data file.\nContent can be modified by administrators.',
+                permission: 'user',
+                type: 'file'
+            },
+            'test2.exe': {
+                content: 'EXECUTABLE FILE - CANNOT DISPLAY BINARY CONTENT\nFile Type: Application\nPermissions: Execute only\nSize: 2.1KB',
+                permission: 'admin',
+                type: 'executable'
+            },
+            'test3.sys': {
+                content: 'SYSTEM FILE\n===========\nCritical system component.\nDo not modify without proper authorization.',
+                permission: 'admin',
+                type: 'system'
+            }
+        };
+        
+        // System state
+        let currentUser = null;
+        let loginState = 'username'; // 'username', 'password', 'logged_in'
+        let tempUsername = '';
         let isBootComplete = false;
         let isTyping = false;
+        
+        // Basic commands available to all users
+        const baseCommands = {
+            'HELP': 'AVAILABLE COMMANDS:\n- LS/LIST: Show directory contents\n- CAT <filename>: Display file contents\n- WHOAMI: Current user information\n- CLEAR: Clear screen\n- LOGOUT: End session\n- DATE: Current system time\n- STATUS: System status',
+            'DATE': () => new Date().toLocaleString(),
+            'CLEAR': 'clear',
+            'LOGOUT': 'logout'
+        };
+        
+        // Admin-only commands
+        const adminCommands = {
+            'USERS': 'USER MANAGEMENT:\n- Total Users: 3\n- Admin Users: 1\n- Active Sessions: 1\n- System Uptime: 127 days',
+            'UPTIME': 'SYSTEM UPTIME: 127 DAYS, 14 HOURS, 32 MINUTES\nBOOT TIME: 2025-01-27 09:15:33\nLAST MAINTENANCE: 2025-06-01 14:22:10'
+        };
         
         // Typewriter effect function
         async function typeText(element, text, speed = 50) {
             isTyping = true;
-            element.textContent = '';
             
             for (let i = 0; i < text.length; i++) {
                 element.textContent += text[i];
@@ -227,20 +303,18 @@
         
         // Boot sequence
         async function bootSequence() {
-            // Play boot sound
             try {
                 bootSound.play().catch(() => {});
             } catch (e) {}
             
-            const bootText = `SYSTEM BOOT COMPLETE...
-LOADING KERNEL MODULES...
-INITIALIZING NETWORK PROTOCOLS...
-MOUNTING FILE SYSTEMS...
+            const bootText = `INITIALIZING JAKE'S GOODIES TERMINAL...
+LOADING SECURITY PROTOCOLS...
+MOUNTING ENCRYPTED FILE SYSTEMS...
+ESTABLISHING NETWORK CONNECTION...
+SYSTEM READY
 
-WELCOME TO TERMINAL v2.1
-TYPE 'HELP' FOR AVAILABLE COMMANDS
-
-`;
+AUTHENTICATION REQUIRED
+Enter username: `;
             
             await typeText(output, bootText, 80);
             isBootComplete = true;
@@ -248,15 +322,13 @@ TYPE 'HELP' FOR AVAILABLE COMMANDS
             input.focus();
         }
         
-        // Type response text
+        // Type response
         async function typeResponse(text) {
             const currentContent = output.textContent;
-            output.textContent = currentContent;
             
             for (let i = 0; i < text.length; i++) {
                 output.textContent += text[i];
                 
-                // Play typing sound for visible characters
                 if (text[i] !== '\n' && text[i] !== ' ') {
                     try {
                         typeSound.currentTime = 0;
@@ -269,6 +341,141 @@ TYPE 'HELP' FOR AVAILABLE COMMANDS
             }
         }
         
+        // Handle login process
+        async function handleLogin(inputValue) {
+            if (loginState === 'username') {
+                tempUsername = inputValue.toLowerCase();
+                if (users[tempUsername]) {
+                    await typeResponse(`\nPassword: `);
+                    loginState = 'password';
+                    input.type = 'password';
+                    input.classList.add('password-input');
+                } else {
+                    await typeResponse(`\nUSER NOT FOUND\nEnter username: `);
+                }
+            } else if (loginState === 'password') {
+                if (users[tempUsername] && users[tempUsername].password === inputValue) {
+                    currentUser = users[tempUsername];
+                    loginState = 'logged_in';
+                    input.type = 'text';
+                    input.classList.remove('password-input');
+                    
+                    const welcomeMsg = currentUser.level === 'admin' ? 
+                        `\nACCESS GRANTED - ADMINISTRATOR LEVEL\nWelcome, ${currentUser.name}\nType HELP for available commands\n\n` :
+                        `\nACCESS GRANTED - USER LEVEL\nWelcome, ${currentUser.name}\nType HELP for available commands\n\n`;
+                    
+                    await typeResponse(welcomeMsg);
+                    prompt.textContent = `${currentUser.name.toUpperCase()}> `;
+                    if (currentUser.level === 'admin') {
+                        prompt.classList.add('admin');
+                    }
+                } else {
+                    await typeResponse(`\nACCESS DENIED\nEnter username: `);
+                    loginState = 'username';
+                    tempUsername = '';
+                    input.type = 'text';
+                    input.classList.remove('password-input');
+                }
+            }
+        }
+        
+        // Handle file commands
+        function handleFileCommand(command, args) {
+            if (command === 'LS' || command === 'LIST') {
+                let fileList = 'DIRECTORY CONTENTS:\n==================\n';
+                for (const [filename, fileData] of Object.entries(fileSystem)) {
+                    if (currentUser.level === 'admin' || fileData.permission === 'user') {
+                        const typeIndicator = fileData.type === 'file' ? '' : 
+                                            fileData.type === 'executable' ? '*' : 
+                                            fileData.type === 'system' ? '#' : '';
+                        fileList += `${filename}${typeIndicator}\n`;
+                    }
+                }
+                return fileList;
+            } else if (command === 'CAT') {
+                if (!args[0]) {
+                    return 'ERROR: CAT requires a filename\nUsage: CAT <filename>';
+                }
+                
+                const filename = args[0].toLowerCase();
+                const file = fileSystem[filename];
+                
+                if (!file) {
+                    return `ERROR: File '${filename}' not found`;
+                }
+                
+                if (file.permission === 'admin' && currentUser.level !== 'admin') {
+                    return `ERROR: Access denied - Administrator privileges required`;
+                }
+                
+                return `\n=== ${filename.toUpperCase()} ===\n${file.content}\n`;
+            }
+            
+            return null;
+        }
+        
+        // Handle commands
+        async function handleCommand(inputValue) {
+            const parts = inputValue.trim().toUpperCase().split(' ');
+            const command = parts[0];
+            const args = parts.slice(1);
+            const commandLine = `${currentUser.name.toUpperCase()}> ${inputValue}\n`;
+            
+            if (command === 'CLEAR') {
+                output.textContent = '';
+                return;
+            } else if (command === 'LOGOUT') {
+                await typeResponse(commandLine);
+                await typeResponse('LOGGING OUT...\nSESSION TERMINATED\n\nEnter username: ');
+                currentUser = null;
+                loginState = 'username';
+                tempUsername = '';
+                prompt.textContent = 'LOGIN> ';
+                prompt.classList.remove('admin');
+                return;
+            } else if (command === 'WHOAMI') {
+                await typeResponse(commandLine);
+                const userInfo = `USER: ${currentUser.name}\nACCESS LEVEL: ${currentUser.level.toUpperCase()}\nSESSION ID: 0x${Math.random().toString(16).substr(2, 6).toUpperCase()}\n\n`;
+                await typeResponse(userInfo);
+                return;
+            } else if (command === 'STATUS') {
+                await typeResponse(commandLine);
+                const status = `JAKE'S GOODIES TERMINAL STATUS:\n==============================\nSYSTEM: OPERATIONAL\nUSER: ${currentUser.name} (${currentUser.level.toUpperCase()})\nFILES: ${Object.keys(fileSystem).length} available\nSECURITY: ACTIVE\n\n`;
+                await typeResponse(status);
+                return;
+            }
+            
+            // File system commands
+            const fileResponse = handleFileCommand(command, args);
+            if (fileResponse) {
+                await typeResponse(commandLine);
+                await typeResponse(fileResponse + '\n\n');
+                return;
+            }
+            
+            // Base commands
+            if (baseCommands[command]) {
+                await typeResponse(commandLine);
+                const response = typeof baseCommands[command] === 'function' ? 
+                                baseCommands[command]() : baseCommands[command];
+                await typeResponse(response + '\n\n');
+                return;
+            }
+            
+            // Admin commands
+            if (currentUser.level === 'admin' && adminCommands[command]) {
+                await typeResponse(commandLine);
+                await typeResponse(adminCommands[command] + '\n\n');
+                return;
+            }
+            
+            // Unknown command
+            if (command !== '') {
+                await typeResponse(commandLine);
+                await typeResponse(`ERROR: COMMAND '${command}' NOT RECOGNIZED\nTYPE 'HELP' FOR AVAILABLE COMMANDS\n\n`);
+            }
+        }
+        
         // Hide input initially
         input.style.display = 'none';
         
@@ -277,32 +484,16 @@ TYPE 'HELP' FOR AVAILABLE COMMANDS
             setTimeout(bootSequence, 500);
         });
         
+        // Main input handler
         input.addEventListener('keypress', async function(e) {
             if (e.key === 'Enter' && !isTyping && isBootComplete) {
-                const command = input.value.trim().toUpperCase();
-                const commandLine = `SYSTEM> ${input.value}\n`;
-                
-                // Disable input during typing
+                const inputValue = input.value.trim();
                 input.disabled = true;
                 
-                if (command === 'CLEAR') {
-                    output.textContent = '';
-                } else if (command === 'EXIT') {
-                    await typeResponse(commandLine);
-                    await typeResponse('TERMINATING SESSION...\n');
-                    setTimeout(() => {
-                        document.body.innerHTML = '<div style="color: green; text-align: center; margin-top: 50vh; font-size: 18px;">SESSION TERMINATED</div>';
-                    }, 2000);
-                    return;
-                } else if (commands[command]) {
-                    await typeResponse(commandLine);
-                    const response = typeof commands[command] === 'function' ? commands[command]() : commands[command];
-                    await typeResponse(response + '\n\n');
-                } else if (command === '') {
-                    // Do nothing for empty input
+                if (loginState !== 'logged_in') {
+                    await handleLogin(inputValue);
                 } else {
-                    await typeResponse(commandLine);
-                    await typeResponse(`ERROR: COMMAND '${command}' NOT RECOGNIZED\nTYPE 'HELP' FOR AVAILABLE COMMANDS\n\n`);
+                    await handleCommand(inputValue);
                 }
                 
                 input.value = '';
@@ -312,7 +503,7 @@ TYPE 'HELP' FOR AVAILABLE COMMANDS
             }
         });
         
-        // Keep input focused when boot is complete
+        // Keep input focused
         document.addEventListener('click', () => {
             if (isBootComplete && !isTyping) input.focus();
         });
