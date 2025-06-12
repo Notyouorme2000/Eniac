@@ -137,15 +137,7 @@
                      SYSTEM v2.1 - AUTHORIZED ACCESS ONLY
                 </pre>
             </div>
-            <div class="output" id="output">SYSTEM BOOT COMPLETE...
-LOADING KERNEL MODULES...
-INITIALIZING NETWORK PROTOCOLS...
-MOUNTING FILE SYSTEMS...
-
-WELCOME TO TERMINAL v2.1
-TYPE 'HELP' FOR AVAILABLE COMMANDS
-
-</div>
+            <div class="output" id="output"></div>
             <div class="input-line">
                 <span class="prompt">SYSTEM> </span>
                 <input type="text" class="input" id="commandInput" autocomplete="off" spellcheck="false">
@@ -192,6 +184,12 @@ TYPE 'HELP' FOR AVAILABLE COMMANDS
         const output = document.getElementById('output');
         const input = document.getElementById('commandInput');
         
+        // Audio setup
+        const bootSound = new Audio('boot.mp3');
+        const typeSound = new Audio('type.mp3');
+        typeSound.volume = 0.3;
+        bootSound.volume = 0.7;
+        
         const commands = {
             'HELP': 'AVAILABLE COMMANDS:\n- LIST: Show directory contents\n- STATUS: System status\n- CLEAR: Clear screen\n- EXIT: Terminate session\n- DATE: Current system time\n- WHOAMI: User information\n- UPTIME: System uptime',
             'LIST': 'Directory contents:\ntest1.dat\ntest2.exe\ntest3.sys\nsystem.cfg\nboot.log',
@@ -202,42 +200,126 @@ TYPE 'HELP' FOR AVAILABLE COMMANDS
             'CLEAR': 'clear'
         };
         
-        input.focus();
+        let isBootComplete = false;
+        let isTyping = false;
         
-        input.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
+        // Typewriter effect function
+        async function typeText(element, text, speed = 50) {
+            isTyping = true;
+            element.textContent = '';
+            
+            for (let i = 0; i < text.length; i++) {
+                element.textContent += text[i];
+                
+                // Play typing sound for visible characters
+                if (text[i] !== '\n' && text[i] !== ' ') {
+                    try {
+                        typeSound.currentTime = 0;
+                        typeSound.play().catch(() => {});
+                    } catch (e) {}
+                }
+                
+                element.scrollTop = element.scrollHeight;
+                await new Promise(resolve => setTimeout(resolve, speed));
+            }
+            isTyping = false;
+        }
+        
+        // Boot sequence
+        async function bootSequence() {
+            // Play boot sound
+            try {
+                bootSound.play().catch(() => {});
+            } catch (e) {}
+            
+            const bootText = `SYSTEM BOOT COMPLETE...
+LOADING KERNEL MODULES...
+INITIALIZING NETWORK PROTOCOLS...
+MOUNTING FILE SYSTEMS...
+
+WELCOME TO TERMINAL v2.1
+TYPE 'HELP' FOR AVAILABLE COMMANDS
+
+`;
+            
+            await typeText(output, bootText, 80);
+            isBootComplete = true;
+            input.style.display = 'block';
+            input.focus();
+        }
+        
+        // Type response text
+        async function typeResponse(text) {
+            const currentContent = output.textContent;
+            output.textContent = currentContent;
+            
+            for (let i = 0; i < text.length; i++) {
+                output.textContent += text[i];
+                
+                // Play typing sound for visible characters
+                if (text[i] !== '\n' && text[i] !== ' ') {
+                    try {
+                        typeSound.currentTime = 0;
+                        typeSound.play().catch(() => {});
+                    } catch (e) {}
+                }
+                
+                output.scrollTop = output.scrollHeight;
+                await new Promise(resolve => setTimeout(resolve, 30));
+            }
+        }
+        
+        // Hide input initially
+        input.style.display = 'none';
+        
+        // Start boot sequence
+        window.addEventListener('load', () => {
+            setTimeout(bootSequence, 500);
+        });
+        
+        input.addEventListener('keypress', async function(e) {
+            if (e.key === 'Enter' && !isTyping && isBootComplete) {
                 const command = input.value.trim().toUpperCase();
                 const commandLine = `SYSTEM> ${input.value}\n`;
+                
+                // Disable input during typing
+                input.disabled = true;
                 
                 if (command === 'CLEAR') {
                     output.textContent = '';
                 } else if (command === 'EXIT') {
-                    output.textContent += commandLine;
-                    output.textContent += 'TERMINATING SESSION...\n';
+                    await typeResponse(commandLine);
+                    await typeResponse('TERMINATING SESSION...\n');
                     setTimeout(() => {
                         document.body.innerHTML = '<div style="color: green; text-align: center; margin-top: 50vh; font-size: 18px;">SESSION TERMINATED</div>';
                     }, 2000);
-                    input.disabled = true;
                     return;
                 } else if (commands[command]) {
-                    output.textContent += commandLine;
+                    await typeResponse(commandLine);
                     const response = typeof commands[command] === 'function' ? commands[command]() : commands[command];
-                    output.textContent += response + '\n\n';
+                    await typeResponse(response + '\n\n');
                 } else if (command === '') {
                     // Do nothing for empty input
                 } else {
-                    output.textContent += commandLine;
-                    output.textContent += `ERROR: COMMAND '${command}' NOT RECOGNIZED\nTYPE 'HELP' FOR AVAILABLE COMMANDS\n\n`;
+                    await typeResponse(commandLine);
+                    await typeResponse(`ERROR: COMMAND '${command}' NOT RECOGNIZED\nTYPE 'HELP' FOR AVAILABLE COMMANDS\n\n`);
                 }
                 
                 input.value = '';
+                input.disabled = false;
+                input.focus();
                 output.scrollTop = output.scrollHeight;
             }
         });
         
-        // Keep input focused
-        document.addEventListener('click', () => input.focus());
-        setInterval(() => input.focus(), 100);
+        // Keep input focused when boot is complete
+        document.addEventListener('click', () => {
+            if (isBootComplete && !isTyping) input.focus();
+        });
+        
+        setInterval(() => {
+            if (isBootComplete && !isTyping) input.focus();
+        }, 100);
     </script>
 </body>
 </html>
